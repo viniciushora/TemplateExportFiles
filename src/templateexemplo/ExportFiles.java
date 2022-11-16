@@ -17,36 +17,36 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 public class ExportFiles extends AbstractExportFiles{
 
-    BufferedWriter out = null;
-    XWPFDocument document;
-    FileOutputStream out1 = null;
-
     public ExportFiles() {
-        this.loadHTML();
-        try {
-            current = new java.io.File(".").getCanonicalPath();
-            out1 = new FileOutputStream(new File(current + "\\src\\" + "word.docx"));
-            document = new XWPFDocument();
-            //Blank Document
-        } catch (IOException ex) {
-            Logger.getLogger(ExportFiles.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        super();
     }
     
-    private void loadHTML(){
-        String current = null;
+    @Override
+    protected void loadHTML(){
         try {
             current = new java.io.File(".").getCanonicalPath();
             File file = new File(current + "\\src\\" + "index.html");
             FileWriter fw = new FileWriter(file.getAbsoluteFile());
-            out = new BufferedWriter(fw);
-            out.write("<HTML><BODY>");
+            this.out = new BufferedWriter(fw);
+            this.out.write("<HTML><BODY>");
         } catch (IOException ex) {
             Logger.getLogger(ExportFiles.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+    }
+    @Override
+    protected void loadWord(){
+        try {
+                current = new java.io.File(".").getCanonicalPath();
+                this.out1 = new FileOutputStream(new File(current + "\\src\\" + "word.docx"));
+                this.document = new XWPFDocument();
+                //Blank Document
+            } catch (IOException ex) {
+                Logger.getLogger(ExportFiles.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }
     
+    @Override
     public void exportHTML(String txt){
         String[] txtLinhas = txt.split("\n");
         for(Object linhas : txtLinhas )
@@ -57,6 +57,7 @@ public class ExportFiles extends AbstractExportFiles{
         
     }
     
+    @Override
     public void exportWord(String txt){
              String[] txtLinhas = txt.split("\n");
         for(Object linhas : txtLinhas )
@@ -66,34 +67,38 @@ public class ExportFiles extends AbstractExportFiles{
         saveWord();   
     }
 
-    private void printLineHTML(String linha) {
+    @Override
+    protected void printLineHTML(String linha) {
         try {
-            out.write("<BR>" + linha);
+            this.out.write("<BR>" + linha);
         } catch (IOException ex) {
             Logger.getLogger(ExportFiles.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    private void printLineWord(String linha) {
-        XWPFParagraph paragraph = document.createParagraph();
+    @Override
+    protected void printLineWord(String linha) {
+        XWPFParagraph paragraph = this.document.createParagraph();
         XWPFRun run = paragraph.createRun();
         run.setText(linha);
     }
         
+    @Override
     protected void saveWord() {
         try {
-            document.write(out1);
-            out1.close();
+            this.document.write(this.out1);
+            this.out1.close();
         } catch (IOException ex) {
             Logger.getLogger(ExportFiles.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
+    @Override
     protected void saveHTML() {
         try {
-            out.write("</BODY>");
-            out.write("</HTML>");
-            out.close();
+            this.out.write("</BODY>");
+            this.out.write("</HTML>");
+            this.out.close();
         } catch (IOException ex) {
             Logger.getLogger(ExportFiles.class.getName()).log(Level.SEVERE, null, ex);
         }
